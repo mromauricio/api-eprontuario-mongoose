@@ -7,7 +7,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());      
 
-var infopaciente = require('./controllers/infopacienteController.js');
+let infopaciente = require('./controllers/controllerInfoPaciente.js');
 app.use('/infopaciente', infopaciente);
 
 const port = 3000;
