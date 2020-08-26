@@ -1,21 +1,38 @@
-let express = require('express');
-let router = express.Router();
-let modelInfoPaciente = require('../model/modelInfoPaciente.js');
+const express = require('express');
+const router = express.Router();
+let serviceInfoPaciente = require('../services/servicelInfoPaciente.js');
 
 router.post('/', (req, res) => {
-  if (modelInfoPaciente.insertPaciente(req.body)==0) return res.status(400).send();
-  res.status(201).send();
+  switch (serviceInfoPaciente.ruleInputPaciente(req.body)) {
+    case 0:
+        return res.status(201).send();
+    case 1:
+        return res.status(400).send();
+    case 2:
+        return res.status(406).send();
+  }
 });
 
 router.get('/', (req, res, next) => {
-  if (modelInfoPaciente.readPaciente(req.query.cpf)==0) return res.status(400).send();
-  return res.status(200).send();
+  switch (serviceInfoPaciente.ruleReadPaciente(req.query.cpf)) {
+    case 0:
+        return res.status(200).send();
+    case 1:
+        return res.status(400).send();
+    case 2:
+        return res.status(406).send();
+  }
 });
 
 router.put('/:id', (req, res) => {
-  if (modelInfoPaciente.updatePaciente(req.params.id,req.body.cpf)==0) return res.status(400).send();
-  return res.status(201).send();
+  switch (serviceInfoPaciente.ruleUpdatePaciente(req.params.id,req.body.cpf)) {
+    case 0:
+        return res.status(200).send();
+    case 1:
+        return res.status(400).send();
+    case 2:
+        return res.status(406).send();
+  }
 });
-
 
 module.exports = router;
