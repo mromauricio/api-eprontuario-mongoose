@@ -10,8 +10,10 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 var async = require('async')
-var Paciente = require('./model/paciente')
+var Paciente = require('./models/paciente')
 
+nomeaux = 'Miguel';
+cpfaux = '171.355.237-09'
 
 let pacientes = [];
 
@@ -31,7 +33,7 @@ function PacienteCreate(nome, cpf, cb) {
 function createPacientes(cb) {
   async.parallel([
       function(callback) {
-        PacienteCreate("Mauricio","045.319.137.10", callback);
+        PacienteCreate(nomeaux,cpfaux, callback);
       },
       ],
       // optional callback
