@@ -14,6 +14,18 @@ router.post('/', (req, res) => {
   }
 });
 
+router.put('/:id', async (req, res, next) => {
+  let retorno = await serviceInfoPaciente.DBruleUpdatePaciente(req.params.id,req.body);
+  switch (retorno) {
+    case 0:
+        return res.status(200).send();
+    case 1:
+        return res.status(400).send();
+    case 2:
+        return res.status(406).send();
+  }
+});
+
 router.get('/cpf', async (req, res, next) => {
   let retorno = await serviceInfoPaciente.DBruleReadPacienteCpf(req.query.cpf);
   switch (retorno) {  
@@ -42,8 +54,23 @@ router.get('/nome', async (req, res, next) => {
   }
 });
 
-router.put('/:id', async (req, res, next) => {
-  let retorno = await serviceInfoPaciente.DBruleUpdatePaciente(req.params.id,req.body.cpf);
+router.get('/registro', async (req, res, next) => {
+  let retorno = await serviceInfoPaciente.DBruleReadPacienteRegistro(req.query.registro);
+  switch (retorno) {  
+    case 1:
+        return res.status(500).send({'':''});
+    case 3:
+        return res.status(404).send({"Registro buscado não existe no Banco de Dados.":""});    
+    default:
+        return res.status(200).send(retorno);    
+  }
+});
+
+
+////// TEMP //////
+
+router.put('/:idtemp', async (req, res, next) => {
+  let retorno = await serviceInfoPaciente.DBruleUpdateCpfPaciente(req.params.id,req.body.cpf);
   switch (retorno) {
     case 0:
         return res.status(200).send();

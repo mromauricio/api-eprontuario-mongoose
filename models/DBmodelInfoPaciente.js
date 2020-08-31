@@ -32,6 +32,16 @@ exports.DBreadPacienteCpf = async (query) => {
  return retorno;
 }
 
+exports.DBreadPacienteRegistro = async (query) => {
+  console.log('[QUERY]  Registro: ', query);
+  let retorno = await Paciente.find({'registro':query}, 'nome cpf', function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
+ if (retorno == 1) return 1;
+ return retorno;
+}
+
 exports.DBreadPacienteNome = async (query) => {
   console.log('[QUERY]  NOME: ', query);
   let retorno = await Paciente.find({'nome':query}, 'nome cpf menor responsavel cpfresp cns registro nacionalidade nascimento genero tel cel whatsapp email endereco cep bairro uf cidade historico medicamento cirurgia trauma', function (err, result){
@@ -44,6 +54,43 @@ exports.DBreadPacienteNome = async (query) => {
 }
 
 exports.DBupdatePaciente = async (idSearch,bodyUpdate) => {
+  console.log('[ID search]->',idSearch);
+  let retornoFind = await Paciente.findOne({'_id':idSearch});
+  if (retornoFind._id != idSearch) return 1;
+  
+  retornoFind.nome = bodyUpdate.nome;
+  retornoFind.menor = bodyUpdate.menor;
+  retornoFind.responsavel = bodyUpdate.responsavel;
+  retornoFind.cpfresp = bodyUpdate.cpfresp;
+  retornoFind.cpf = bodyUpdate.cpf;
+  retornoFind.cns = bodyUpdate.cns;
+  retornoFind.registro = bodyUpdate.registro;
+  retornoFind.nacionalidade = bodyUpdate.nacionalidade;
+  retornoFind.nascimento = bodyUpdate.nascimento;
+  retornoFind.genero = bodyUpdate.genero;
+  retornoFind.tel = bodyUpdate.tel;
+  retornoFind.cel = bodyUpdate.cel;
+  retornoFind.whatsapp = bodyUpdate.whatsapp;
+  retornoFind.email = bodyUpdate.email;
+  retornoFind.endereco = bodyUpdate.endereco;
+  retornoFind.cep = bodyUpdate.cep;
+  retornoFind.bairro = bodyUpdate.bairro;
+  retornoFind.uf = bodyUpdate.uf;
+  retornoFind.cidade = bodyUpdate.cidade;
+  retornoFind.historico = bodyUpdate.historico;
+  retornoFind.medicamento = bodyUpdate.medicamento;
+  retornoFind.cirurgia = bodyUpdate.cirurgia;
+  retornoFind.trauma = bodyUpdate.trauma;
+
+  let retorno = await retornoFind.save();
+  console.log('Updated _id-> ',retorno._id);
+  return 0;
+}
+
+
+//// TEMP ///
+
+exports.DBupdateCpfPaciente = async (idSearch,bodyUpdate) => {
   console.log('[CPF search]->',idSearch);
   console.log('[CPF update]->',bodyUpdate);
   let retornoFind = await Paciente.findOne({'cpf':idSearch});
