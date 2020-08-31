@@ -1,10 +1,10 @@
 var async = require('async')
 let DBInfoPaciente = require('../models/DBmodelInfoPaciente.js');
 
-exports.DBruleInputPaciente = (data) => {
+exports.DBruleInputPaciente = async (data) => {
   data.nome = data.nome.toUpperCase();
   if (data.cpf=='') return 2;                  // Testa se CPF está preenchido
-  if (DBInfoPaciente.DBinsertPaciente(data) == 0) return 0;
+  if (await DBInfoPaciente.DBinsertPaciente(data) == 0) return 0;
   return 1;
   }
 

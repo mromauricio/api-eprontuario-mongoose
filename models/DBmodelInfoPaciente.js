@@ -1,61 +1,49 @@
 var async = require('async')
-//Set up mongoose connection
+
 var mongoose = require('mongoose');
-//var mongoDB = 'mongodb+srv://mromauricioDB:PWDmromauricioDB@cluster0.hufxi.gcp.mongodb.net/local_library?retryWrites=true&w=majority';
 var mongoDB = 'mongodb+srv://mromauricioDB:PWDmromauricioDB@cluster0.hufxi.gcp.mongodb.net/eprontuario?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', function() {console.log("Successful connection on MongoDB eProntuario!");});
 
 var Paciente = require('../models/paciente');
 
-exports.DBinsertPaciente = (data) => {
+exports.DBinsertPaciente = async (data) => {
   let pacienteRecord = new Paciente({nome: data.nome, menor: data.menor, responsavel: data.responsavel, cpfresp: data.cpfresp, cpf: data.cpf,
   cns: data.cns, registro: data.registro, nacionalidade: data.nacionalidade, nascimento: data.nascimento, genero: data.genero, tel: data.tel,
   cel: data.cel, whatsapp: data.whatsapp, email: data.email, endereco: data.endereco, cep: data.cep, bairro: data.bairro, uf: data.uf,
   cidade: data.cidade, historico: data.historico, medicamento: data.medicamento, cirurgia: data.cirurgia, trauma: data.trauma});
-
- pacienteRecord.save(function (err){
-    if (err) console.log(err);
-  })
-  console.log('Paciente incluído com sucesso no BD!')
+  
+  let retorno = await pacienteRecord.save(function (err, result){
+    if (err) {console.log(err); return 1;}
+    if (result) {console.log('[REGISTRO INSERIDO] ',result); return result;}
+  });
+  if (retorno == 1) return 1;
   return 0;
 }
 
-exports.DBreadPacienteCpf = async (query) => {
-  console.log('[QUERY]  CPF: ', query);
-  let retorno = await Paciente.find({'cpf':query}, 'nome cpf menor responsavel cpfresp cns registro nacionalidade nascimento genero tel cel whatsapp email endereco cep bairro uf cidade historico medicamento cirurgia trauma', function (err, result){
-    if (err) return 1;
-    if (result) return result; 
-  });
- if (retorno == 1) return 1;
- return retorno;
-}
-
-exports.DBreadPacienteRegistro = async (query) => {
-  console.log('[QUERY]  Registro: ', query);
-  let retorno = await Paciente.find({'registro':query}, 'nome cpf', function (err, result){
-    if (err) return 1;
-    if (result) return result; 
-  });
- if (retorno == 1) return 1;
- return retorno;
-}
-
 exports.DBreadPacienteNome = async (query) => {
-  console.log('[QUERY]  NOME: ', query);
-  let retorno = await Paciente.find({'nome':query}, 'nome cpf menor responsavel cpfresp cns registro nacionalidade nascimento genero tel cel whatsapp email endereco cep bairro uf cidade historico medicamento cirurgia trauma', function (err, result){
-    if (err) return 1;
-    if (result) return result; 
-  });
- //console.log ('RESULT QUERY DB:', retorno) 
+  console.log('[CONSULTA COMEÇA COM]  NOME: ', query);
+  query = '^'+query;  // regex ˆ significa - começa com
+  let retorno = await Paciente.find({ $or:[
+      { 'nome': { $regex: query, $options: 'i' }},
+      { 'nome': { $regex: query.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), $options: 'i' }}
+      ]},  function (err, result){
+        if (err) return 1;
+        if (result) return result; 
+      });
+ console.log ('[RETORNO CONSULTA] ', retorno) 
  if (retorno == 1) return 1;
  return retorno;
 }
 
 exports.DBupdatePaciente = async (idSearch,bodyUpdate) => {
-  console.log('[ID search]->',idSearch);
-  let retornoFind = await Paciente.findOne({'_id':idSearch});
+  console.log('[ID CONSULTA]->',idSearch);
+  let retornoFind = await Paciente.findOne({'_id':idSearch}, function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
   if (retornoFind._id != idSearch) return 1;
   
   retornoFind.nome = bodyUpdate.nome;
@@ -82,10 +70,36 @@ exports.DBupdatePaciente = async (idSearch,bodyUpdate) => {
   retornoFind.cirurgia = bodyUpdate.cirurgia;
   retornoFind.trauma = bodyUpdate.trauma;
 
-  let retorno = await retornoFind.save();
-  console.log('Updated _id-> ',retorno._id);
+  let retorno = await retornoFind.save(function (err, result){
+    if (err) {console.log(err); return 1;}
+    if (result) {console.log('[REGISTRO ATUALIZADO] ',result); return result;}
+  });
   return 0;
 }
+
+exports.DBreadPacienteRegistro = async (query) => {
+  console.log('[CONSULTA]  REGISTRO: ', query);
+  let retorno = await Paciente.find({'registro':query}, 'nome cpf', function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
+ if (retorno == 1) return 1;
+ console.log('[RETORNO CONSULTA] ',retorno);
+ return retorno;
+}
+
+exports.DBreadPacienteCpf = async (query) => {
+  console.log('[QUERY]  CPF: ', query);
+  let retorno = await Paciente.find({'cpf':query}, function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
+ if (retorno == 1) return 1;
+ return retorno;
+}
+
+
+
 
 
 //// TEMP ///
@@ -101,18 +115,3 @@ exports.DBupdateCpfPaciente = async (idSearch,bodyUpdate) => {
   console.log('CPF alterado para: ',retorno.cpf);
   return 0;
 }
-
-// exports.DBupdatePaciente = (idSearch,bodyUpdate) => {
-//   console.log('[CPF search]->',idSearch, '  [CPF update]->',bodyUpdate);
-//   Paciente.findOne({'cpf':idSearch})
-//   .then(retorno => Paciente.updateOne({'_id':retorno._id},{'cpf':bodyUpdate}))
-//   .then(retorno => console.log('DB APÓS ALTERAÇÃO: ',retorno));
-//   return 0;
-// }
-
-
-// let doc = await Character.findOneAndUpdate(filter, update, {
-//   new: true
-// });
-// doc.name; // 'Jean-Luc Picard'
-// doc.age; // 59

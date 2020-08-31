@@ -28,4 +28,5 @@ let PacienteSchema = new Schema({
   trauma       : {type: String}
 });
 
+
 module.exports = mongoose.model('Paciente',PacienteSchema);

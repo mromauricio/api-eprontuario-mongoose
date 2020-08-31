@@ -3,8 +3,8 @@ const express = require('express');
 const router = express.Router();
 let serviceInfoPaciente = require('../services/servicelInfoPaciente.js');
 
-router.post('/', (req, res) => {
-  switch (serviceInfoPaciente.DBruleInputPaciente(req.body)) {
+router.post('/', async (req, res, next) => {
+  switch (await serviceInfoPaciente.DBruleInputPaciente(req.body)) {
     case 0:
         return res.status(201).send();
     case 1:
