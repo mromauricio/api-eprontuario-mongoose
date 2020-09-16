@@ -26,20 +26,6 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-router.get('/cpf', async (req, res, next) => {
-  let retorno = await serviceInfoPaciente.DBruleReadPacienteCpf(req.query.cpf);
-  switch (retorno) {  
-    case 1:
-        return res.status(500).send({'':''});
-    case 2:
-        return res.status(406).send({'':''});
-    case 3:
-        return res.status(404).send({"CPF buscado não existe no Banco de Dados.":""});    
-    default:
-        return res.status(200).send(retorno);    
-  }
-});
-
 router.get('/nome', async (req, res, next) => {
   let retorno = await serviceInfoPaciente.DBruleReadPacienteNome(req.query.nome);
   switch (retorno) {  
@@ -49,6 +35,31 @@ router.get('/nome', async (req, res, next) => {
         return res.status(406).send({'':''});
     case 3:
         return res.status(404).send({"Nome buscado não existe no Banco de Dados.":""});    
+    default:
+        return res.status(200).send(retorno);    
+  }
+});
+
+
+router.get('/cpf', async (req, res, next) => {
+  let retorno = await serviceInfoPaciente.DBruleReadPacienteCpf(req.query.cpf);
+  switch (retorno) {  
+    case 1:
+      return res.status(500).send({'':''});
+    case 3:
+        return res.status(404).send({"CPF buscado não existe no Banco de Dados.":""});    
+    default:
+        return res.status(200).send(retorno);    
+  }
+});
+
+router.get('/cns', async (req, res, next) => {
+  let retorno = await serviceInfoPaciente.DBruleReadPacienteCns(req.query.cns);
+  switch (retorno) {  
+    case 1:
+        return res.status(500).send({'':''});
+    case 3:
+        return res.status(404).send({"CNS buscado não existe no Banco de Dados.":""});    
     default:
         return res.status(200).send(retorno);    
   }
@@ -65,6 +76,13 @@ router.get('/registro', async (req, res, next) => {
         return res.status(200).send(retorno);    
   }
 });
+
+
+
+
+
+
+
 
 
 ////// TEMP //////

@@ -25,10 +25,12 @@ exports.DBinsertPaciente = async (data) => {
 
 exports.DBreadPacienteNome = async (query) => {
   console.log('[CONSULTA COMEÇA COM]  NOME: ', query);
-  query = '^'+query;  // regex ˆ significa - começa com
+  //query = '^'+query;  // regex ˆ significa - começa com
   let retorno = await Paciente.find({ $or:[
-      { 'nome': { $regex: query, $options: 'i' }},
-      { 'nome': { $regex: query.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), $options: 'i' }}
+      { 'nome': query },
+      { 'nome': query.normalize('NFD').replace(/[\u0300-\u036f]/g, "") }
+      // { 'nome': { $regex: query, $options: 'i' }},
+      // { 'nome': { $regex: query.normalize('NFD').replace(/[\u0300-\u036f]/g, ""), $options: 'i' }}
       ]},  function (err, result){
         if (err) return 1;
         if (result) return result; 
@@ -76,6 +78,29 @@ exports.DBupdatePaciente = async (idSearch,bodyUpdate) => {
   });
   return 0;
 }
+
+exports.DBreadPacienteCpf = async (query) => {
+  console.log('[CONSULTA]  CPF: ', query);
+  let retorno = await Paciente.find({'cpf':query}, function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
+ if (retorno == 1) return 1;
+ console.log('[RETORNO CONSULTA] ',retorno);
+ return retorno;
+}
+
+exports.DBreadPacienteCns = async (query) => {
+  console.log('[CONSULTA]  CNS: ', query);
+  let retorno = await Paciente.find({'cns':query}, 'nome cpf', function (err, result){
+    if (err) return 1;
+    if (result) return result; 
+  });
+ if (retorno == 1) return 1;
+ console.log('[RETORNO CONSULTA] ',retorno);
+ return retorno;
+}
+
 
 exports.DBreadPacienteRegistro = async (query) => {
   console.log('[CONSULTA]  REGISTRO: ', query);

@@ -3,7 +3,7 @@ let DBInfoPaciente = require('../models/DBmodelInfoPaciente.js');
 
 exports.DBruleInputPaciente = async (data) => {
   data.nome = data.nome.toUpperCase();
-  if (data.cpf=='') return 2;                  // Testa se CPF está preenchido
+  //if (data.cpf=='') return 2;                  // Regra que obriga o CPF ser preenchido
   if (await DBInfoPaciente.DBinsertPaciente(data) == 0) return 0;
   return 1;
   }
@@ -21,11 +21,19 @@ exports.DBruleReadPacienteNome = async (query) => {
 exports.DBruleReadPacienteCpf = async (query) => {
   if (query=='000') return 2;   // Teste fictício de validação da regra de negócio para provocar return 2 
   let retorno = await DBInfoPaciente.DBreadPacienteCpf(query)
-  if (retorno=='') {
-    return 3;
-  }
+  if (retorno=='') return 3;
+  if (retorno==1) return 1;
   return retorno;
 } 
+
+exports.DBruleReadPacienteCns = async (query) => {
+  if (query=='000.0000.0000.0000') return 2;   // Teste fictício de validação da regra de negócio para provocar return 2 
+  let retorno = await DBInfoPaciente.DBreadPacienteCns(query)
+  if (retorno=='') return 3;
+  if (retorno==1) return 1;
+  return retorno;
+} 
+
 
 exports.DBruleReadPacienteRegistro = async (query) => {
   if (query=='0.000.000') return 2;   // Teste fictício de validação da regra de negócio para provocar return 2 
