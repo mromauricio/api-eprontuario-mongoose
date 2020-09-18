@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 app.use(cors());      
 
 let infopaciente = require('./controllers/controllerInfoPaciente.js');
-app.use('/infopaciente', infopaciente);
+app.use('/pacientes', infopaciente);
 
 const port = 3000;
 app.listen(port, () => {
