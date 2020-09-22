@@ -92,7 +92,7 @@ exports.DBreadPacienteCpf = async (query) => {
 
 exports.DBreadPacienteCns = async (query) => {
   console.log('[CONSULTA]  CNS: ', query);
-  let retorno = await Paciente.find({'cns':query}, 'nome cpf', function (err, result){
+  let retorno = await Paciente.find({'cns':query}, function (err, result){
     if (err) return 1;
     if (result) return result; 
   });
@@ -104,7 +104,7 @@ exports.DBreadPacienteCns = async (query) => {
 
 exports.DBreadPacienteRegistro = async (query) => {
   console.log('[CONSULTA]  REGISTRO: ', query);
-  let retorno = await Paciente.find({'registro':query}, 'nome cpf', function (err, result){
+  let retorno = await Paciente.find({'registro':query}, function (err, result){
     if (err) return 1;
     if (result) return result; 
   });
@@ -113,15 +113,6 @@ exports.DBreadPacienteRegistro = async (query) => {
  return retorno;
 }
 
-exports.DBreadPacienteCpf = async (query) => {
-  console.log('[QUERY]  CPF: ', query);
-  let retorno = await Paciente.find({'cpf':query}, function (err, result){
-    if (err) return 1;
-    if (result) return result; 
-  });
- if (retorno == 1) return 1;
- return retorno;
-}
 
 
 
