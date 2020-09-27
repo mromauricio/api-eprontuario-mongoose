@@ -77,7 +77,7 @@ router.get('/registro', async (req, res, next) => {
   }
 });
 
-
+module.exports = router;
 
 
 
@@ -134,4 +134,3 @@ router.put('/:idtemp', async (req, res, next) => {
 //   }
 // });
 
-module.exports = router;
