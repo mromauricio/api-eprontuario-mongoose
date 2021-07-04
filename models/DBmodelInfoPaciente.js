@@ -1,7 +1,7 @@
 var async = require('async')
 
 var mongoose = require('mongoose');
-var mongoDB = 'mongodb+srv://mromauricioDB:PWDmromauricioDB@cluster0.hufxi.gcp.mongodb.net/eprontuario?retryWrites=true&w=majority';
+var mongoDB = 'mongodb+srv://mromauricioDB:XXXXXX@cluster0.hufxi.gcp.mongodb.net/eprontuario?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true , useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
